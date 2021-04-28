@@ -5,11 +5,10 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './grafica1.component.html',
   styles: []
 })
-export class Grafica1Component implements OnInit {
+export class Grafica1Component {
+  public labels1: string[] = ['Pan', 'Refresco', 'Tacos']
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  public data1 = [
+    [10, 15, 40]
+  ];
 }
