@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RegisterForm } from '../interfaces/register-form.interface';
 
 import { environment } from '../../environments/environment';
@@ -8,11 +8,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Usuario } from '../models/usuario.model';
-import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
 import Swal from 'sweetalert2';
 
 
-const base_url = environment.base_url;
+const base_url = environment.base_url + "/User";
 
 declare const gapi: any;
 
@@ -30,6 +29,10 @@ export class UsuarioService {
 
   get token(): string{
     return localStorage.getItem('token') || '';
+  }
+
+  get role(): string{
+    return this.usuario.role;
   }
 
   get uid(): string {
@@ -61,6 +64,7 @@ export class UsuarioService {
 
   logout(){
     localStorage.removeItem('token');
+    localStorage.removeItem('menu');
 
     this.auth2.signOut().then(() => {
       this.ngZone.run(()=>{
@@ -84,7 +88,9 @@ export class UsuarioService {
 
         this.usuario = new Usuario( nombre, email, '', role,google, img, uid);
         this.usuario = resp.usuario;
-        localStorage.setItem('token', resp.token);
+
+        this.guardarLocalStorage(resp.token, resp.menu);
+
         return true;
       }),
       catchError(error => of(false))
@@ -95,8 +101,7 @@ export class UsuarioService {
     return this.http.post(`${ base_url}/usuarios`, formData)
     .pipe(
       tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
-
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
   }
@@ -108,40 +113,42 @@ export class UsuarioService {
       role: this.usuario.role
     }
 
-    return this.http.put(`${ base_url}/usuarios(${this.uid})`, data, this.headers)
-    .pipe(
-      tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
-
-      })
-    );
+    return this.http.put(`${ base_url}/usuarios(${this.uid})`, data, this.headers);
   }
 
   login(formData: LoginForm){
-    return this.http.post(`${ base_url}/login`, formData)
+     
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
+    });
+
+    console.log(formData);
+    return this.http.post(`${ base_url}/authenticate`, formData, { headers: headers })
               .pipe(
                 tap((resp: any) => {
-                  localStorage.setItem('token', resp.token);
-
+                  this.guardarLocalStorage(resp.token, resp.menu);
                 })
               );
   }
 
   loginGoogle(token){
-    return this.http.post(`${ base_url}/login/google`, {token})
+    return this.http.post(`api/login/google`, {token})
               .pipe(
                 tap((resp: any) => {
-                  localStorage.setItem('token', resp.token);
-
+                  this.guardarLocalStorage(resp.token, resp.menu);
                 })
               );
   }
 
   cargarUsuario(desde: number = 0){
     const url = `${base_url}/usuarios?desde=${desde}`;
-    return this.http.get<CargarUsuario>(url, this.headers)
+    return this.http.get(url, this.headers)
                 .pipe(
-                  map(resp => {
+                  map((resp: any) => {
                     const usuarios = resp.usuarios.map(
                       user => new Usuario(user.nombre, user.email, user.password,user.role, user.google, user.img, user.uid)
                     );
@@ -161,6 +168,10 @@ export class UsuarioService {
 
   guardarUsuario(usuario: Usuario){
       return this.http.put(`${ base_url}/usuarios/${usuario.uid}`, usuario, this.headers);
-    }
+  }
 
+  guardarLocalStorage(token: string, menu: any){
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
 }

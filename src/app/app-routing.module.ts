@@ -5,13 +5,18 @@ import { PagesRoutingModule } from './pages/pages.routing';
 import { AuthRoutingModule } from './auth/auth.routing';
 
 const routes: Routes =  [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', component: NopagefoundComponent }
 ];
 
 @NgModule({
   declarations: [],
   imports: [
-    RouterModule.forRoot( routes ),
+    RouterModule.forRoot( routes,{
+      onSameUrlNavigation: "ignore",
+      anchorScrolling:'enabled',
+      scrollPositionRestoration: 'enabled'
+    } ),
     PagesRoutingModule,
     AuthRoutingModule
   ],

@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Usuario } from 'src/app/models/usuario.model';
-import { BusquedasService } from 'src/app/services/busquedas.service';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../../../services/usuario.service';
-import { ModalImagenService } from '../../../services/modal-imagen.service';
 import { delay } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
@@ -22,7 +20,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   public imgSubs: Subscription;
 
 
-  constructor(private usuarioService: UsuarioService, private busquedasService: BusquedasService, private modalImagenService: ModalImagenService) {
+  constructor(private usuarioService: UsuarioService) {
 
    }
   ngOnDestroy(): void {
@@ -31,11 +29,6 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cargarUsuarios();
-    this.imgSubs = this.modalImagenService.nuevaImagen
-        .pipe( delay(100) )
-        .subscribe(img => {
-          this.cargarUsuarios()
-        });
   }
 
   cargarUsuarios(){
@@ -66,11 +59,6 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     if(termino.length === 0){
       return this.usuarios = this.usuariosTemp;
     }
-
-    this.busquedasService.buscar( 'usuarios', termino)
-        .subscribe((resultados: Usuario[]) => {
-          this.usuarios = resultados;
-        });
   }
 
   eliminarUsuario(usuario: Usuario){
@@ -123,6 +111,5 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   }
 
   abrirModal(usuario){
-    this.modalImagenService.abrirModal('usuarios',usuario.uid, usuario.img);
   }
 }

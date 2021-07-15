@@ -1,0 +1,12 @@
+<div class="row animated fadeIn fast">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <input (keyup)="setSearch(txtSearch.value)" #txtSearch type="text" class="form-control" placeholder="Buscar usuario" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<app-grid-view [gridViewParams]="gridViewParams" [inputSearchItems]="inputSearchItems"></app-grid-view>

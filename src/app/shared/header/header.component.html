@@ -43,8 +43,10 @@
                 <!-- Search -->
                 <!-- ============================================================== -->
                 <li class="nav-item hidden-xs-down search-box"> <a class="nav-link hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
-                    <form class="app-search">
-                        <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
+                    <form class="app-search" (submit)="buscar(txtTermino.value)">
+                        <input type="text" class="form-control" placeholder="Busqueda" #txtTermino>
+                        <a class="srh-btn"><i class="ti-close"></i></a>
+                    </form>
                 </li>
                 <!-- ============================================================== -->
                 <!-- Comment -->
@@ -155,16 +157,17 @@
                 <!-- Profile -->
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img [src]="usuario.imagenUrl" alt="user" class="profile-pic" /></a>
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img [src]="" alt="user" class="profile-pic" /></a>
                     <div class="dropdown-menu dropdown-menu-right animated fadeIn animated-fast">
                         <ul class="dropdown-user">
                             <li>
                                 <div class="dw-user-box">
-                                    <div class="u-img"><img [src]="usuario.imagenUrl" alt="user"></div>
+                                    <div class="u-img"><img [src]="" alt="user"></div>
+                                    <!--usuario.imagenUrl-->
                                     <div class="u-text">
-                                        <h4>{{ usuario.nombre }}</h4>
+                                        <!--<h4>{{ usuario.nombre }}</h4>-->
                                         <p class="text-muted">
-                                            {{ usuario.email | slice: 0:20 }}{{usuario.email.length > 20 ? '...' : ''}}
+                                            <!--{{ usuario.email | slice: 0:20 }}{{usuario.email.length > 20 ? '...' : ''}}-->
                                         </p><a href="pages-profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
                                 </div>
                             </li>

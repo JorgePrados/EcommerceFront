@@ -1,0 +1,115 @@
+<!--Template-->
+<div class="row animated fadeIn fast" *ngIf="loading">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info text-center">
+                    <h4 class="alert-heading">Cargando</h4>
+                    <i class="fa fa-spin fa-refresh fa-2x"></i>
+                    <p class="mb-0">Por favor Espere</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" *ngIf="!loading">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h4 class="card-title">{{gridViewParams.title}}</h4>
+                        <h6 class="card-subtitle">{{gridViewParams.subTitle}}</h6>
+                    </div>
+                    <div class="col-md-2">
+                        <a [routerLink]="['/',gridViewParams.detailRedirection,0]"><i class="fa fa-save icons cursor"></i></a>
+                        <a><i class="fa fa-download icons cursor"></i></a>
+                        <a data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" (click)="changeColumnModal()">
+                            <i class="fa fa-columns icons cursor"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <div id="myTable_wrapper" class="dataTables_wrapper no-footer">
+                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered dataTable" cellspacing="0" width="100%" role="grid" aria-describedby="example23_info" style="width: 100%;">
+                            <thead>
+                                <tr role="row">
+                                    <th *ngFor="let column of columns" (click)="setOrderBy(column.name)" class="title" [ngClass]="classDirection(column.name)" [id]="column" tabindex="0" aria-controls="example23" rowspan="1" colspan="1" aria-label="Código: activate to sort column ascending"
+                                        style="width: 161px;" aria-sort="descending">
+                                        {{column.description}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th rowspan="1" colspan="1" *ngFor="let column of columns">
+                                        {{column.description}}
+                                    </th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr (click)="itemDetailNavigation(item[gridViewParams.columnId])" *ngFor="let item of items" role="row" class="cursor odd">
+                                    <td class="sorting_1" *ngFor="let column of columns"> {{item[column.name]}}</td>
+                                    <!--<td></td>
+                                    <td class="text-nowrap text-center">
+                                        
+                                        <a data-toggle="tooltip" data-original-title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                        <a (click)="deleteItem(item[gridViewParams.columnId])" data-toggle="tooltip" data-original-title="Eliminar"> <i class="fa fa-close text-danger"></i> </a>
+                                        
+                                    </td>-->
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="dataTables_info" id="example23_info" role="status" aria-live="polite">
+                            Mostrando {{registerTo}} al {{registerFrom}} de {{rowsAffected}} entradas
+                        </div>
+                        <div class="dataTables_paginate paging_simple_numbers" id="example23_paginate">
+                            <a *ngIf="page > 1" (click)="setPage(page - 1)" class="paginate_button previous" aria-controls="example23" data-dt-idx="0" tabindex="0" id="example23_previous">
+                                Previous
+                            </a>
+                            <span>
+                                <a *ngFor="let currentPage of pageList" class="paginate_button" [ngClass]="{'current': currentPage === page}" (click)="setPage(currentPage)" aria-controls="example23" data-dt-idx="1" tabindex="0">
+                                    {{currentPage}}
+                                </a>
+                            </span>
+                            <a *ngIf="page < nPages" (click)="setPage(page + 1)" class="paginate_button next" aria-controls="example23" data-dt-idx="7" tabindex="0" id="example23_next">
+                                Next
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal Columnas-->
+<div class="modal fade" [ngStyle]="{'display': showColumnModal ? 'block' : 'none' }" [ngClass]="{'show': showColumnModal}" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" style="display: block;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel1">Columnas del Grid</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div *ngFor="let configurationColumnTable of configurationColumnsTable; let i = index">
+                    <input type="hidden" [(ngModel)]="configurationColumnsTable[i].order" size="2" />
+                    <div style="display: inline;">
+                        <i class="fa fa-sort-up cursor" style="line-height: 0.3em;" (click)="changeColumnPosition(configurationColumnTable, -1)"></i><br>
+                        <i class="fa fa-sort-down cursor" style="line-height: 0.3em;" (click)="changeColumnPosition(configurationColumnTable, +1)"></i>
+                    </div>
+                    &nbsp;
+                    <input type="checkbox" [(ngModel)]="configurationColumnsTable[i].isSelected" id="chkColumn{{configurationColumnTable.name}}" class="filled-in chk-col-green ">
+                    <label for="chkColumn{{configurationColumnTable.name}}">{{configurationColumnTable.description}}</label>
+
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button " class="btn btn-default " data-dismiss="modal " (click)="changeColumnModal() ">Close</button>
+                <button type="button " class="btn btn-primary" (click)="addConfigurationColumnsTable()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
